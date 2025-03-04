@@ -1,6 +1,7 @@
 # Dockerfile extension of Ultralytics' Docker image by JavierMtz5
 
-FROM ultralytics/ultralytics:latest
+# FROM ultralytics/ultralytics:latest
+FROM ultralytics/ultralytics:8.3.82-cpu
 
 ENV APP_HOME=/home/app
 WORKDIR ${APP_HOME}
@@ -18,7 +19,8 @@ COPY ./yolov8n_test.pt ${APP_HOME}/yolov8n_test.pt
 EXPOSE 8080
 
 # fastapi run app/main.py --port 8080
-CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
+# CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
 
 # uvicorn app.main:app --reload
 # CMD ["uvicorn", "app.main:app", "--reload"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

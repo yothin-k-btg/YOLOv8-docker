@@ -5,19 +5,20 @@ from PIL import Image
 import ultralytics
 import ultralytics.engine
 import ultralytics.engine.results
-import albumentations as A
+# import albumentations as A
 import numpy as np
 
 __version__ = "0.1"
 
 # model = ultralytics.YOLO('yolov8n.pt')
-model = ultralytics.YOLO('yolov8n_test.pt')
+# model = ultralytics.YOLO('yolov8n_test.pt')
+model = ultralytics.YOLO('p3-sow-detect-yolov8m-01.pt')
 
-# setup transformer
-transformer = A.Compose([
-    A.CLAHE(always_apply=True)
+# # setup transformer
+# transformer = A.Compose([
+#     A.CLAHE(always_apply=True)
     
-], bbox_params=A.BboxParams(format='yolo'))
+# ], bbox_params=A.BboxParams(format='yolo'))
 
 def inference_on_path(imgs_path: str) -> List[Dict[str, Any]]:
     """
@@ -40,11 +41,24 @@ def inference_on_img(img: Image) -> List[Dict[str, Any]]:
     Runs inference on the YOLOv8 architecture for the given image
     """
     
-    image_np = np.array(img)
-    transformed = transformer(image=image_np)
-    img = Image.fromarray(transformed['image'])
+    # image_np = np.array(img)
+    # transformed = transformer(image=image_np)
+    # img = Image.fromarray(transformed['image'])
 
     results: ultralytics.engine.results.Results = model(source=img, show=False, conf=0.45)
-    result_data = json.loads(results[0].tojson())
+    for r in results:
+        # result_data = json.dumps(r.boxes.xywhn.numpy().tolist())
+        
+        result_dict = {
+            'xywhn': r.boxes.xywhn.numpy().tolist(),
+            'cls': r.boxes.cls.numpy().tolist(),
+            'conf': r.boxes.conf.numpy().tolist()
+        }
+        result_data = json.dumps(result_dict)
+    
+    # result_data = json.loads(results[0].tojson())
+    
+    # results = model.predict(img, verbose=False)
+    # result_data = json.loads(results[0].tojson())
 
     return result_data

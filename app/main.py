@@ -8,6 +8,13 @@ from fastapi import FastAPI, Query, File, UploadFile
 from app.model.model import inference_on_img, inference_on_path
 from app.model.model import __version__ as model_version
 
+# import truststore
+# truststore.inject_into_ssl()
+
+os.environ['CURL_CA_BUNDLE'] = ''
+os.environ['REQUESTS_CA_BUNDLE'] = ''
+# os.environ['HTTP_PROXY'] = "http://127.0.0.1:8080"
+# os.environ['HTTPS_PROXY'] = "http://127.0.0.1:8080"
 app = FastAPI()
 
 @app.get('/')
